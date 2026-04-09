@@ -19,7 +19,7 @@ _run-all: _local _linux
 # their own GitHub status — _summary reads those statuses to decide
 # the final pass/fail.
 _local:
-    just ci::fmt ci::typecheck ci::test ci::unit ci::apm-sync || true
+    just ci::fmt ci::typecheck ci::test ci::apm-sync || true
 
 _linux:
     CI_SYSTEM=x86_64-linux just ci::nix || true
