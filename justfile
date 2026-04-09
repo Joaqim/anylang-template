@@ -39,6 +39,10 @@ check: fmt-check
     {{ nix_shell }} sh -c 'zizmor .'
     git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- list -check
 
+# Spellcheck (optional, human-controlled or specialized CI)
+spellcheck:
+    {{ nix_shell }} typos . .github .vscode
+
 # Run CI verification
 # Override this in projects with actual CI commands
 ci: check

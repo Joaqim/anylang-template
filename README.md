@@ -63,6 +63,45 @@ just pre-commit-update
 
 Hooks are automatically installed in the Nix dev shell via `shell.nix`.
 
+## Development Workflow
+
+### Quick Commands
+
+```bash
+just check       # Run all checks (fmt-check, security, selfup)
+just fmt         # Format all files (uses treefmt)
+just spellcheck  # Optional spellcheck (human-controlled)
+just ci          # Run CI verification
+just test        # Run tests (project-specific)
+```
+
+### Checks vs Spellcheck
+
+**`just check`** runs on every commit and in CI:
+- `treefmt --fail-on-change` — Code formatting
+- `zizmor .` — Nix security audit
+- `selfup` — Dependency updates check
+
+**`just spellcheck`** is optional and human-controlled:
+- `typos` — Spellchecker for code and documentation
+- Not run by default in agent workflows or CI
+- Use before releases or when you want polish
+- See [ADR-001](./docs/adr/001-typos-checking-strategy.md) for rationale
+
+**Why separate them?**
+- Agent workflows should focus on correctness, not pedantic spelling
+- Spellcheck blocks fast iteration without adding value
+- Humans control when polish is needed (pre-release, documentation updates)
+
+### Quality Standards
+
+This template enforces [code-police rules](agents/.apm/instructions/code-police-rules.instructions.md):
+- No flake inputs (maintain zero-input performance)
+- Justfile doc comments required
+- Pre-commit hooks must be installed
+- Use treefmt, not direct formatter calls
+- Test recipe must be overridden in projects
+
 ## Agentic Coding Workflow
 
 ### Quick Start
