@@ -13,14 +13,33 @@ default:
 clean:
     git clean -fdX
 
-# Format all files in-place
+# Pre-commit hooks
+pre-commit-install:
+    {{ nix_shell }} pre-commit install
+
+pre-commit-run:
+    {{ nix_shell }} pre-commit run --all-files
+
+pre-commit-update:
+    {{ nix_shell }} pre-commit autoupdate
+
+# Format all files in-place (now uses treefmt)
 fmt:
-    {{ nix_shell }} sh -c 'dprint fmt; nixpkgs-fmt *.nix nix/**/*.nix'
+    {{ nix_shell }} treefmt
 
 # Check formatting without modifying files (used by CI)
 fmt-check:
-    {{ nix_shell }} sh -c 'dprint check ; typos . .github .vscode ; zizmor . ; nixpkgs-fmt --check *.nix nix/**/*.nix'
+    {{ nix_shell }} treefmt --fail-on-change
+
+# Run all checks (typecheck, security, formatting)
+check: fmt-check
+    {{ nix_shell }} sh -c 'zizmor .'
     git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- list -check
+
+# Run CI verification
+# Override this in projects with actual CI commands
+ci: check
+    @echo "CI check passed"
 
 selfup:
     git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- run

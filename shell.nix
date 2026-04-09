@@ -26,5 +26,10 @@ pkgs.mkShellNoCC {
     dprint
     typos
     zizmor
+
+    # Pre-commit hooks
+    prek
+    gitleaks
+    treefmt
   ];
 }

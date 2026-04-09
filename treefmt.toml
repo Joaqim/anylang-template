@@ -1,0 +1,15 @@
+# Treefmt configuration
+# See https://github.com/numtide/treefmt
+
+[formatter.dprint]
+command = "dprint"
+includes = ["*.ts", "*.tsx", "*.js", "*.jsx", "*.json", "*.md", "*.toml", "*.yaml", "*.yml"]
+
+[formatter.nix]
+command = "nixpkgs-fmt"
+includes = ["*.nix"]
+
+[formatter.typos]
+command = "typos"
+includes = ["*"]
+excludes = ["pnpm-lock.yaml", "package-lock.json", "yarn.lock", "*.lock", "node_modules"]

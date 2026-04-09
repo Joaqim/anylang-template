@@ -27,6 +27,42 @@ AI_AGENT='claude --dangerously-skip-permissions' just agent
 
 Project instructions live in `agents/.apm/instructions/` and deploy to `.claude/rules/` (or equivalent) via `apm install`.
 
+## Pre-commit Hooks
+
+This repo uses [prek](https://github.com/NumTide/prek) for pre-commit hook management with the following hooks:
+
+- **treefmt** — Formats all code using project-specific formatters (dprint, nixpkgs-fmt)
+- **gitleaks** — Detects secrets and credentials in staged files
+
+### Setup
+
+```bash
+# Enter the dev shell
+direnv allow  # or `nix develop`
+
+# Install pre-commit hooks
+just pre-commit-install
+```
+
+### Usage
+
+Hooks run automatically on `git commit`. To run manually:
+
+```bash
+# Run all hooks on all files
+just pre-commit-run
+
+# Update hook versions
+just pre-commit-update
+```
+
+### Configuration
+
+- `.pre-commit-config.yaml` — Hook definitions
+- `treefmt.toml` — Formatter configurations (dprint, nixpkgs-fmt, typos)
+
+Hooks are automatically installed in the Nix dev shell via `shell.nix`.
+
 ## Agentic Coding Workflow
 
 ### Quick Start
@@ -142,6 +178,19 @@ The generated `.claude/` directory is **committed to git** instead of being giti
 - **GitHub-browsable** — Anyone can read `.claude/rules/` on GitHub to understand the agent config without cloning.
 
 The single source of truth remains `apm.yml` + `agents/.apm/`. Edit sources there, run `just agent::apm`, and commit the result.
+
+### Workflow Commands
+
+The `/do` workflow expects these commands to be available:
+
+```bash
+just check   # Run all checks (fmt-check, security, selfup)
+just fmt     # Format all files (uses treefmt)
+just ci      # Run CI verification (calls check)
+just test    # Run tests (project-specific, override as needed)
+```
+
+These are provided at the template level. For project-specific implementations, override them in a project-specific justfile module.
 
 ## Performance
 
