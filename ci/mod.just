@@ -19,7 +19,7 @@ _run-all: _local _linux _darwin
 # their own GitHub status — _summary reads those statuses to decide
 # the final pass/fail.
 _local:
-    just ci::fmt ci::typecheck ci::unit ci::apm-sync || true
+    just ci::fmt ci::typecheck ci::test ci::unit ci::apm-sync || true
 
 _linux:
     CI_SYSTEM=x86_64-linux just ci::nix ci::_linux-fanout || true
@@ -32,6 +32,10 @@ nix:
 
 typecheck:
     just ci::_run typecheck just check
+
+# Run tests (if configured)
+test:
+    just ci::_run test just test
 
 # Verify vendored .claude/ matches .apm/ sources + security audit
 apm-sync:

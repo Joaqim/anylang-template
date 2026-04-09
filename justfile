@@ -14,12 +14,15 @@ clean:
     git clean -fdX
 
 # Pre-commit hooks
+# Install pre-commit hooks in .git/hooks/
 pre-commit-install:
     {{ nix_shell }} pre-commit install
 
+# Run all pre-commit hooks manually on all files
 pre-commit-run:
     {{ nix_shell }} pre-commit run --all-files
 
+# Update pre-commit hook versions to latest
 pre-commit-update:
     {{ nix_shell }} pre-commit autoupdate
 
@@ -41,6 +44,7 @@ check: fmt-check
 ci: check
     @echo "CI check passed"
 
+# Update selfup to latest version and run it
 selfup:
     git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- run
 
@@ -51,3 +55,8 @@ build:
 # Run the application
 run:
     nix run
+
+# Run tests (placeholder - override in projects)
+# Override this in projects with actual test commands
+test:
+    @echo "No tests configured for this project"
