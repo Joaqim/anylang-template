@@ -22,7 +22,7 @@ _local:
     just ci::fmt ci::typecheck ci::test ci::unit ci::apm-sync || true
 
 _linux:
-    CI_SYSTEM=x86_64-linux just ci::nix ci::_linux-fanout || true
+    CI_SYSTEM=x86_64-linux just ci::nix || true
 
 nix:
     just ci::_devour-flake nix --override-input flake .
