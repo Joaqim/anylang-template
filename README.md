@@ -78,17 +78,20 @@ just test        # Run tests (project-specific)
 ### Checks vs Spellcheck
 
 **`just check`** runs on every commit and in CI:
+
 - `treefmt --fail-on-change` — Code formatting
 - `zizmor .` — Nix security audit
 - `selfup` — Dependency updates check
 
 **`just spellcheck`** is optional and human-controlled:
+
 - `typos` — Spellchecker for code and documentation
 - Not run by default in agent workflows or CI
 - Use before releases or when you want polish
 - See [ADR-001](./docs/adr/001-typos-checking-strategy.md) for rationale
 
 **Why separate them?**
+
 - Agent workflows should focus on correctness, not pedantic spelling
 - Spellcheck blocks fast iteration without adding value
 - Humans control when polish is needed (pre-release, documentation updates)
@@ -96,6 +99,7 @@ just test        # Run tests (project-specific)
 ### Quality Standards
 
 This template enforces [code-police rules](agents/.apm/instructions/code-police-rules.instructions.md):
+
 - No flake inputs (maintain zero-input performance)
 - Justfile doc comments required
 - Pre-commit hooks must be installed
@@ -144,6 +148,7 @@ For exploration and discussion without making changes:
 ```
 
 Use this to:
+
 - Explore the codebase together
 - Discuss architecture decisions
 - Research approaches before implementation
@@ -156,6 +161,7 @@ Use this to:
 **`hickey`** — Structural simplicity evaluation using [Rich Hickey's "Simple Made Easy"](https://www.infoq.com/presentations/Simple-Made-Easy/). Catches accidental complexity that tests can't.
 
 **`code-police`** — Three-pass quality gate:
+
 1. **Rules check** — Validates against generic + project-specific rules
 2. **Fact-check** — Detects logic errors and inconsistent states
 3. **Elegance review** — Iterative refinement for clarity and simplicity
@@ -171,19 +177,23 @@ Project-specific instructions live in `agents/.apm/instructions/`:
   ```markdown
   ---
   description: Workflow commands for the /do pipeline
-  applyTo: "**"
+  applyTo: '**'
   ---
 
   ## Check command
+
   `just check` — fast static-correctness gate
 
   ## Format command
+
   `just fmt`
 
   ## Test command
+
   `just test` — run only tests for changed code paths
 
   ## CI command
+
   `just ci` — verify by checking exit code 0
   ```
 
@@ -197,6 +207,7 @@ Project-specific instructions live in `agents/.apm/instructions/`:
   ## Code Police Rules
 
   ### no-raw-sql
+
   Use the query builder for all database access. No raw SQL strings outside migrations.
   ```
 
@@ -238,6 +249,7 @@ These are provided at the template level. For project-specific implementations, 
 This flake intentionally has **zero inputs**. Instead of the flake input system, nixpkgs is imported via `fetchTarball` in `nix/nixpkgs.nix` and pinned with npins.
 
 **Why?** Each flake input adds ~1.5s to cold eval due to fetcher-cache verification. Even a single nixpkgs input costs ~7s. With zero inputs:
+
 - **Cold eval**: ~2.5s (first run after cache clear)
 - **Warm eval**: ~1.6s (subsequent runs with cache)
 
@@ -245,25 +257,26 @@ This flake intentionally has **zero inputs**. Instead of the flake input system,
 
 Tested on the following hardware:
 
-| Component | Specification |
-|-----------|---------------|
-| CPU | Intel Core i5-6600K @ 3.50GHz (4 cores, 1 thread/core) |
-| RAM | 15 GB |
-| OS | NixOS (Linux 6.18.20) |
-| Nix | 2.31.3 |
-| System | x86_64-linux |
+| Component | Specification                                          |
+| --------- | ------------------------------------------------------ |
+| CPU       | Intel Core i5-6600K @ 3.50GHz (4 cores, 1 thread/core) |
+| RAM       | 15 GB                                                  |
+| OS        | NixOS (Linux 6.18.20)                                  |
+| Nix       | 2.31.3                                                 |
+| System    | x86_64-linux                                           |
 
 **Eval times measured with `time nix develop path:. -c echo "done"`:**
 
-| Condition | Time | Notes |
-|-----------|------|-------|
+| Condition            | Time   | Notes                                      |
+| -------------------- | ------ | ------------------------------------------ |
 | Cold (cache cleared) | 2.477s | After `rm -rf ~/.cache/nix/eval-cache-v6/` |
-| Warm 1 | 2.615s | First run after cold |
-| Warm 2 | 1.880s | |
-| Warm 3 | 1.602s | |
-| Warm 4 | 1.749s | |
+| Warm 1               | 2.615s | First run after cold                       |
+| Warm 2               | 1.880s |                                            |
+| Warm 3               | 1.602s |                                            |
+| Warm 4               | 1.749s |                                            |
 
 **Observations:**
+
 - Cold eval matches the expected ~2.6s closely (2.477s measured)
 - Warm eval settles around 1.6-1.9s, not the claimed 0.3s
 - The 0.3s claim likely comes from faster hardware (SSD, newer CPU) or different Nix configuration

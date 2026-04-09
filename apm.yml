@@ -4,6 +4,6 @@ description: APM project for anylang-template
 author: Joaqim Planstedt
 dependencies:
   apm:
-  - srid/agency#master
+    - srid/agency#master
   mcp: []
 scripts: {}

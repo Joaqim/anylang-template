@@ -3,10 +3,12 @@
 
 [formatter.dprint]
 command = "dprint"
+options = ["fmt"]
 includes = ["*.ts", "*.tsx", "*.js", "*.jsx", "*.json", "*.md", "*.toml", "*.yaml", "*.yml"]
+excludes = [".claude/**"]
 
 [formatter.nix]
-command = "nixpkgs-fmt"
+command = "nixfmt"
 includes = ["*.nix"]
 
 [formatter.typos]

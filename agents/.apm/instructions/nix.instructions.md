@@ -1,6 +1,6 @@
 ---
 description: Nix build conventions — no flake inputs, npins, shared env vars, dev shell performance
-applyTo: "**/*.nix"
+applyTo: '**/*.nix'
 ---
 
 ## Nix

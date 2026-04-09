@@ -1,6 +1,6 @@
 ---
 description: Core workflow conventions — execute pipeline commands, CI, formatting, testing, git, feature discoverability, external libraries
-applyTo: "**"
+applyTo: '**'
 ---
 
 ## Workflow

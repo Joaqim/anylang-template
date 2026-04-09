@@ -1,6 +1,6 @@
 ---
 description: Architecture documentation requirements — keep README in sync with structural changes
-applyTo: "README.md"
+applyTo: 'README.md'
 ---
 
 ## Architecture (README)

@@ -28,13 +28,11 @@ pre-commit-update:
 
 # Format all files in-place
 fmt:
-  {{ nix_shell }} dprint fmt
-  nix fmt
+  {{ nix_shell }} treefmt
 
 # Check formatting without modifying files (used by CI)
 fmt-check:
-  {{ nix_shell }} dprint check
-  {{ nix_shell }} sh -c 'git ls-files "*.nix" | xargs nixfmt --check'
+  {{ nix_shell }} treefmt --fail-on-change
 
 # Run all checks (typecheck, security, formatting)
 check: fmt-check
