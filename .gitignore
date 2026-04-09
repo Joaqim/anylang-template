@@ -22,5 +22,6 @@ client/public/fonts
 node_modules/
 dist/
 .pnpm-store/
+*.tsbuildinfo
 
 

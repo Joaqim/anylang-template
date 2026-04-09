@@ -1,9 +1,9 @@
-import express from "express";
+import express, { type Express } from "express";
 import serveStatic from "serve-static";
 import { resolve } from "node:path";
 import { UserSchema, MessageSchema } from "@my-app/common";
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
