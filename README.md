@@ -71,7 +71,7 @@ Hooks are automatically installed in the Nix dev shell via `shell.nix`.
 just check       # Run all checks (fmt-check, security, selfup)
 just fmt         # Format all files (uses treefmt)
 just spellcheck  # Optional spellcheck (human-controlled)
-just ci          # Run CI verification
+just ci-verify   # Run CI verification (local override)
 just test        # Run tests (project-specific)
 ```
 

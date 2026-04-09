@@ -43,9 +43,9 @@ check: fmt-check
 spellcheck:
     {{ nix_shell }} typos . .github .vscode
 
-# Run CI verification
+# Run CI verification (local override of CI module's ci:: commands)
 # Override this in projects with actual CI commands
-ci: check
+ci-verify: check
     @echo "CI check passed"
 
 # Update selfup to latest version and run it
