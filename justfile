@@ -4,6 +4,7 @@ nix_shell := if env('IN_NIX_SHELL', '') != '' { '' } else { 'nix develop path:' 
 
 mod ai 'agents/ai.just'
 mod ci 'ci/mod.just'
+mod my-app 'my-app.just'
 
 # List available recipes
 default:
