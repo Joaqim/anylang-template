@@ -2,6 +2,9 @@
 
 [![CI - Nix Status](https://github.com/Joaqim/anylang-template/actions/workflows/ci-nix.yml/badge.svg?branch=main)](https://github.com/Joaqim/anylang-template/actions/workflows/ci-nix.yml?query=branch%3Amain+)
 
+- Created from template: [Kachick's anylang-template](https://github.com/kachick/anylang-template)
+- AI configuration extended from Sridhar's APM (Agent Package Manager) package: [srid/agency](https://github.com/srid/agency)
+
 A template that is not exclusive to one programming language.\
 Provides a basic setup for editors, documents, and GitHub Actions.
 
@@ -274,24 +277,6 @@ Tested on the following hardware:
 | Warm 2               | 1.880s |                                            |
 | Warm 3               | 1.602s |                                            |
 | Warm 4               | 1.749s |                                            |
-
-**Observations:**
-
-- Cold eval matches the expected ~2.6s closely (2.477s measured)
-- Warm eval settles around 1.6-1.9s, not the claimed 0.3s
-- The 0.3s claim likely comes from faster hardware (SSD, newer CPU) or different Nix configuration
-- The zero-input design still provides significant benefit over flake-input-based approaches (which would be 7s+ cold)
-
-### Remote Builder
-
-For faster builds on this hardware, configure a remote builder:
-
-```bash
-# ~/.config/nix/machines
-jq@desktop.zt x86_64-linux /etc/nix/signingkey.pub 16 big-parallel,kvm,nixos-test
-```
-
-This enables parallel building across 16 jobs with support for virtualization tests.
 
 ## Repo Structure
 
