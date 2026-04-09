@@ -1,1 +1,8 @@
 .direnv
+
+
+# APM dependencies
+apm_modules/
+
+.env
+!.envrc

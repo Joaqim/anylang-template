@@ -1,47 +1,37 @@
+# IMPORTANT: This flake intentionally has ZERO inputs.
+#
+# nixpkgs is imported via fetchTarball in nix/nixpkgs.nix, bypassing the
+# flake input system. This is critical for `nix develop` performance:
+#
+#   - Each flake input adds ~1.5s of fetcher-cache verification on cold
+#     eval cache. Even a single nixpkgs input costs ~7s.
+#   - With zero inputs, `nix develop` cold is ~2.6s, warm is ~0.3s.
+#
+# DO NOT add flake inputs (nixpkgs, flake-parts, git-hooks, etc.).
+# Instead, use fetchTarball or callPackage in nix/ files.
 {
-  inputs = {
-    nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
-  };
-
   outputs =
-    {
-      nixpkgs,
-      ...
-    }:
+    { self, ... }:
     let
-      inherit (nixpkgs) lib;
-      forAllSystems = lib.genAttrs lib.systems.flakeExposed;
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
+      eachSystem =
+        f:
+        builtins.listToAttrs (
+          map (system: {
+            name = system;
+            value = f (import ./nix/nixpkgs.nix { inherit system; });
+          }) systems
+        );
+      commitHash = self.shortRev or self.dirtyShortRev or "dev";
     in
     {
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.mkShellNoCC {
-            # Set NIX_PATH for nixd inlay hints
-            env.NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
-
-            buildInputs = (
-              with pkgs;
-              [
-                # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-                bashInteractive
-                findutils # xargs
-                nixfmt # nixfmt-rfc-style is now nixfmt: https://github.com/NixOS/nixpkgs/pull/425068
-                nixfmt-tree
-                nixd
-                go-task
-
-                dprint
-                typos
-                zizmor
-              ]
-            );
-          };
-        }
-      );
+      formatter = eachSystem (pkgs: pkgs.nixfmt-tree);
+      packages = eachSystem (pkgs: import ./default.nix { inherit pkgs commitHash; });
+      devShells = eachSystem (pkgs: {
+        default = import ./shell.nix { inherit pkgs; };
+      });
     };
 }

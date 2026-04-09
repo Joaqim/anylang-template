@@ -1,0 +1,41 @@
+# CI steps
+
+import 'lib.just'
+
+sha := `git rev-parse HEAD`
+repo := `git remote get-url origin | sed 's|.*github.com[:/]||;s|\.git$||'`
+system := env("CI_SYSTEM", `nix eval --raw --impure --expr builtins.currentSystem`)
+local_system := `nix eval --raw --impure --expr builtins.currentSystem`
+root := `git rev-parse --show-toplevel`
+systems := "x86_64-linux aarch64-darwin"
+
+default: _preflight _run-all
+    just ci::_summary
+
+[parallel]
+_run-all: _local _linux _darwin
+
+# Each lane swallows failures (|| true) so all steps run and post
+# their own GitHub status — _summary reads those statuses to decide
+# the final pass/fail.
+_local:
+    just ci::fmt ci::typecheck ci::unit ci::apm-sync || true
+
+_linux:
+    CI_SYSTEM=x86_64-linux just ci::nix ci::_linux-fanout || true
+
+_darwin:
+    CI_SYSTEM=aarch64-darwin just ci::nix ci::e2e || true
+
+nix:
+    just ci::_devour-flake nix --override-input flake .
+
+typecheck:
+    just ci::_run typecheck just check
+
+# Verify vendored .claude/ matches .apm/ sources + security audit
+apm-sync:
+    just ci::_run apm-sync just ai::apm-sync
+
+fmt:
+    just ci::_run fmt just fmt-check

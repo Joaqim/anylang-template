@@ -1,0 +1,15 @@
+lockfile_version: '1'
+generated_at: '2026-04-09T13:10:20.135950+00:00'
+apm_version: 0.8.11
+dependencies:
+- repo_url: srid/agency
+  host: github.com
+  resolved_commit: 59fdb9879cfe49c0095d25e2d23c8f4d0eb5b574
+  resolved_ref: master
+  package_type: apm_package
+  deployed_files:
+  - .claude/hooks/agency/scripts/do-stop-guard.sh
+  - .claude/skills/code-police
+  - .claude/skills/forge-pr
+  - .claude/skills/hickey
+  content_hash: sha256:50a863b06f45d845c85e2e959849cf2973752682ab1763adb51743196beaf487
