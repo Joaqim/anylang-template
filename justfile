@@ -26,18 +26,20 @@ pre-commit-run:
 pre-commit-update:
     {{ nix_shell }} pre-commit autoupdate
 
-# Format all files in-place (now uses treefmt)
+# Format all files in-place
 fmt:
-    {{ nix_shell }} treefmt
+  {{ nix_shell }} dprint fmt
+  nix fmt
 
 # Check formatting without modifying files (used by CI)
 fmt-check:
-    {{ nix_shell }} treefmt --fail-on-change
+  {{ nix_shell }} dprint check
+  {{ nix_shell }} sh -c 'git ls-files "*.nix" | xargs nixfmt --check'
 
 # Run all checks (typecheck, security, formatting)
 check: fmt-check
-    {{ nix_shell }} sh -c 'zizmor .'
-    git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- list -check
+    {{ nix_shell }} zizmor .
+    {{ nix_shell }} sh -c 'git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- list -check'
 
 # Spellcheck (optional, human-controlled or specialized CI)
 spellcheck:
@@ -50,7 +52,7 @@ ci-verify: check
 
 # Update selfup to latest version and run it
 selfup:
-    git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- run
+    {{ nix_shell }} sh -c 'git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- run'
 
 # Nix build
 build:

@@ -1,8 +1,27 @@
+# Dotenv
 .direnv
-
-
-# APM dependencies
-apm_modules/
-
 .env
 !.envrc
+
+# Nix
+/result
+/result-*
+
+# APM: generated metadata + per-user state (not vendored)
+apm_modules/
+.claude/worktrees/
+.claude/settings.local.json
+test-results/
+tests/reports/
+client/public/fonts
+.worktrees
+.logs/
+.do-results.json
+
+# Node.js
+node_modules/
+dist/
+.pnpm-store/
+*.tsbuildinfo
+
+

@@ -29,6 +29,7 @@ pkgs.mkShellNoCC {
 
     # Pre-commit hooks
     prek
+    pre-commit
     gitleaks
     treefmt
   ];
