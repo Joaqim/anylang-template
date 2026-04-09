@@ -28,7 +28,13 @@
     in
     {
       formatter = eachSystem (pkgs: pkgs.nixfmt-tree);
-      packages = eachSystem (pkgs: import ./default.nix { inherit pkgs commitHash; });
+      packages = eachSystem (
+        pkgs:
+        let
+          all = import ./default.nix { inherit pkgs commitHash; };
+        in
+        removeAttrs all [ "env" ]
+      );
       devShells = eachSystem (pkgs: {
         default = import ./shell.nix { inherit pkgs; };
       });

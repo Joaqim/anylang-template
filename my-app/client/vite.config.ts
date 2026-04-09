@@ -9,6 +9,11 @@ export default defineConfig({
       "@my-app/common": path.resolve(__dirname, "../common/src"),
     },
   },
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",
