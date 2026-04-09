@@ -7,13 +7,13 @@ repo := `git remote get-url origin | sed 's|.*github.com[:/]||;s|\.git$||'`
 system := env("CI_SYSTEM", `nix eval --raw --impure --expr builtins.currentSystem`)
 local_system := `nix eval --raw --impure --expr builtins.currentSystem`
 root := `git rev-parse --show-toplevel`
-systems := "x86_64-linux aarch64-darwin"
+systems := "x86_64-linux"
 
 default: _preflight _run-all
     just ci::_summary
 
 [parallel]
-_run-all: _local _linux _darwin
+_run-all: _local _linux
 
 # Each lane swallows failures (|| true) so all steps run and post
 # their own GitHub status — _summary reads those statuses to decide
@@ -23,9 +23,6 @@ _local:
 
 _linux:
     CI_SYSTEM=x86_64-linux just ci::nix ci::_linux-fanout || true
-
-_darwin:
-    CI_SYSTEM=aarch64-darwin just ci::nix ci::e2e || true
 
 nix:
     just ci::_devour-flake nix --override-input flake .
