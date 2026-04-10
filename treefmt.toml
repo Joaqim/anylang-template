@@ -5,13 +5,8 @@
 command = "dprint"
 options = ["fmt"]
 includes = ["*.ts", "*.tsx", "*.js", "*.jsx", "*.json", "*.md", "*.toml", "*.yaml", "*.yml"]
-excludes = [".claude/**"]
+excludes = [".claude/**", "agents/.apm/**", ".github/**"]
 
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]
-
-[formatter.typos]
-command = "typos"
-includes = ["*"]
-excludes = ["pnpm-lock.yaml", "package-lock.json", "yarn.lock", "*.lock", "node_modules"]
