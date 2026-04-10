@@ -1,6 +1,6 @@
 ---
 description: Do a task end-to-end — implement, PR, CI loop, ship
-argument-hint: '<issue-url | prompt> [--review] [--no-git] [--from <step>]'
+argument-hint: "<issue-url | prompt> [--review] [--no-git] [--from <step>]"
 ---
 
 # Do Workflow
@@ -229,7 +229,7 @@ Read the project's instructions to find the CI command and verification method. 
 
 **Never pipe CI to `tail`/`head`**, and **never append `2>&1`** — background mode captures both streams.
 
-CI commands are typically local (e.g. `nix flake check`, `just ci`, `make ci`) and are forge-independent — **run them regardless of forge**. Only the _verification method_ may be forge-specific: if the project's instructions describe verification via `gh` commit-status checks and `forge != github`, fall back to exit code + command output for verification on non-GitHub forges, and note this in the step record. (Bitbucket `bkt pr checks` wiring is tracked in #10.)
+CI commands are typically local (e.g. `nix flake check`, `just ci`, `make ci`) and are forge-independent — **run them regardless of forge**. Only the *verification method* may be forge-specific: if the project's instructions describe verification via `gh` commit-status checks and `forge != github`, fall back to exit code + command output for verification on non-GitHub forges, and note this in the step record. (Bitbucket `bkt pr checks` wiring is tracked in #10.)
 
 **Verify**: Use the verification method described in the project's instructions (e.g., checking commit statuses on GitHub, reading CI output elsewhere). If no CI command is documented, skip with a note.
 

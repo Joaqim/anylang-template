@@ -1,6 +1,6 @@
 ---
 description: Redirects agents to edit .apm/ sources instead of generated agent config files
-applyTo: '.claude/**,.opencode/**'
+applyTo: ".claude/**,.opencode/**"
 ---
 
 ## Generated Files — Do Not Edit Directly
