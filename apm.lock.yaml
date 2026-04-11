@@ -1,10 +1,25 @@
 lockfile_version: '1'
-generated_at: '2026-04-10T05:53:35.253472+00:00'
+generated_at: '2026-04-11T17:04:17.749187+00:00'
 apm_version: 0.8.11
 dependencies:
+- repo_url: _local/agents
+  package_type: apm_package
+  deployed_files:
+  - .claude/commands/whatchanged.md
+  - .claude/rules/architecture.md
+  - .claude/rules/code-police-rules.md
+  - .claude/rules/nix.md
+  - .claude/rules/workflow.md
+  - .github/instructions/architecture.instructions.md
+  - .github/instructions/code-police-rules.instructions.md
+  - .github/instructions/nix.instructions.md
+  - .github/instructions/workflow.instructions.md
+  - .github/prompts/whatchanged.prompt.md
+  source: local
+  local_path: ./agents
 - repo_url: srid/agency
   host: github.com
-  resolved_commit: 59fdb9879cfe49c0095d25e2d23c8f4d0eb5b574
+  resolved_commit: 888548f2483149ac304882942c60732916b34a01
   resolved_ref: master
   package_type: apm_package
   deployed_files:
