@@ -1,1 +1,7 @@
 .direnv
+/.do-results.json
+/apm_modules/
+
+
+# APM dependencies
+apm_modules/
