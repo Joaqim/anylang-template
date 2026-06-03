@@ -1,6 +1,6 @@
 ---
-description: "Enter talk mode — conversation only, no file changes"
-argument-hint: "<topic or question>"
+description: 'Enter talk mode — conversation only, no file changes'
+argument-hint: '<topic or question>'
 ---
 
 # Probe (Talk Mode)

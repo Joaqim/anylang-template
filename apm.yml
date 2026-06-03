@@ -1,7 +1,15 @@
 name: anylang-template
 version: 1.0.0
+type: hybrid
 description: APM project for anylang-template
 author: Joaqim Planstedt
+targets:
+  - claude
+  # - codex
+  # - opencode
+compilation:
+  exclude:
+    - AGENTS.md
 dependencies:
   apm:
     - ./agents
