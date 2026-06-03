@@ -1,4 +1,4 @@
-# https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
+# https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#5
 name: ❄️
 on:
   push:
@@ -8,14 +8,14 @@ on:
       - '**.nix'
       - 'flake.*'
       - '.envrc'
-      - 'Taskfile.yml'
+      - 'justfile'
   pull_request:
     paths:
       - '.github/workflows/ci-nix.yml'
       - '**.nix'
       - 'flake.*'
       - '.envrc'
-      - 'Taskfile.yml'
+      - 'justfile'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
@@ -26,7 +26,7 @@ permissions:
   contents: read
 
 jobs:
-  tasks:
+  check:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -38,14 +38,19 @@ jobs:
           extra-conf: |
             extra-substituters = https://nix-community.cachix.org https://cache.garnix.io https://cache.numtide.com https://selfup.cachix.org
             extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= selfup.cachix.org-1:eY2eEd955BmRI7SultbRIV81vApqpJixunkV3XlXuT8=
-      - name: Install direnv
-        run: |
-          url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
-          nix profile add "${url}#direnv"
-      - name: Load environment variables
-        run: |
-          direnv allow .
-          direnv export gha > "$GITHUB_ENV"
       - run: nix flake check
-      - run: nix flake show
-      - run: task check
+      - run: nix build github:srid/devour-flake -L --no-link --print-out-paths --override-input flake .
+
+  fmt:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: NixOS/nix-installer-action@main
+        with:
+          extra-conf: |
+            extra-substituters = https://nix-community.cachix.org https://cache.garnix.io https://cache.numtide.com https://selfup.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g= selfup.cachix.org-1:eY2eEd955BmRI7SultbRIV81vApqpJixunkV3XlXuT8=
+      - run: nix develop .#ci -c sh -c "git ls-files '*.nix' | xargs nixfmt --check"
