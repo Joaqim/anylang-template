@@ -11,6 +11,7 @@
 apm_modules/
 .claude/worktrees/
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 test-results/
 tests/reports/
 client/public/fonts

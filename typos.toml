@@ -18,6 +18,18 @@ extend-ignore-words-re = [
 [files]
 extend-exclude = [
   "go.mod",
+  # Agent configuration — managed by APM or upstream sources.
+  # Excluded pre-emptively so the template works cleanly when additional
+  # targets (codex, opencode, and so on) are enabled in apm.yml.
+  ".claude/**",
+  ".agents/**",
+  ".apm/**",
+  ".opencode/**",
+  ".codex/**",
+  ".github/skills/**",
+  ".github/instructions/**",
+  ".github/prompts/**",
+  "openspec/**",
 ]
 
 # https://github.com/crate-ci/typos/issues/1304#issuecomment-3188457455

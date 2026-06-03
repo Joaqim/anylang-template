@@ -1,20 +1,63 @@
-# Prefix for commands that need a Nix devshell; empty if already inside one.
-
-nix_shell := if env('IN_NIX_SHELL', '') != '' { '' } else { 'nix develop path:' + justfile_directory() + ' -c' }
+# Root justfile for anylang-template
+#
+# Imports agent and CI submodules. Add project-specific recipes here.
 
 mod ai 'agents/ai.just'
 mod ci 'ci/mod.just'
 
-# List available recipes
-default:
-    @just --list
+nix_shell := if env('IN_NIX_SHELL', '') != '' { '' } else { 'nix develop path:' + justfile_directory() + ' -c' }
+selfup := 'nix run --accept-flake-config github:kachick/selfup/v1.3.1'
+
+# Run format, lint, and test
+default: fmt lint test
+
+# Run test and lint (CI gate)
+check: test lint
 
 # Remove all git-ignored files (node_modules, build artifacts, etc.)
 clean:
     git clean -fdX
 
-# Pre-commit hooks
-# Install pre-commit hooks in .git/hooks/
+# Format all files
+fmt:
+    {{ nix_shell }} dprint fmt
+    nix fmt
+
+# Check formatting without modifying files
+fmt-check:
+    {{ nix_shell }} dprint check
+    {{ nix_shell }} sh -c "git ls-files '*.nix' | xargs nixfmt --check"
+
+# Run linters without modifying files
+lint:
+    {{ nix_shell }} dprint check
+    {{ nix_shell }} typos . .github .vscode
+    {{ nix_shell }} zizmor .
+    {{ nix_shell }} sh -c "git ls-files '*.nix' | xargs nixfmt --check"
+    {{ nix_shell }} sh -c "git ls-files | xargs {{ selfup }} -- list -check"
+
+# Spellcheck
+spellcheck:
+    {{ nix_shell }} typos . .github .vscode
+
+# Test suite placeholder — replace with your test runner
+test:
+    echo 'CHANGEME: Add tests'
+
+# Update tool versions via selfup
+selfup:
+    {{ nix_shell }} sh -c "git ls-files | xargs {{ selfup }} -- run"
+
+# Nix build
+build:
+    nix build
+
+# Run the application
+run:
+    nix run
+
+# Pre-commit hooks — requires pre-commit in dev shell or PATH
+# TODO: add pre-commit to flake.nix buildInputs when adopting pre-commit workflow
 pre-commit-install:
     {{ nix_shell }} pre-commit install
 
@@ -25,42 +68,3 @@ pre-commit-run:
 # Update pre-commit hook versions to latest
 pre-commit-update:
     {{ nix_shell }} pre-commit autoupdate
-
-# Format all files in-place
-fmt:
-  {{ nix_shell }} treefmt
-
-# Check formatting without modifying files (used by CI)
-fmt-check:
-  {{ nix_shell }} treefmt --fail-on-change
-
-# Run all checks (typecheck, security, formatting)
-check: fmt-check
-    {{ nix_shell }} zizmor .
-    {{ nix_shell }} sh -c 'git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- list -check'
-
-# Spellcheck (optional, human-controlled or specialized CI)
-spellcheck:
-    {{ nix_shell }} typos . .github .vscode
-
-# Run CI verification (local override of CI module's ci:: commands)
-# Override this in projects with actual CI commands
-ci-verify: check
-    @echo "CI check passed"
-
-# Update selfup to latest version and run it
-selfup:
-    {{ nix_shell }} sh -c 'git ls-files | xargs nix run github:kachick/selfup/v1.3.1 -- run'
-
-# Nix build
-build:
-    nix build
-
-# Run the application
-run:
-    nix run
-
-# Run tests (placeholder - override in projects)
-# Override this in projects with actual test commands
-test:
-    @echo "No tests configured for this project"

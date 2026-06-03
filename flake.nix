@@ -1,21 +1,22 @@
 # IMPORTANT: This flake intentionally has ZERO inputs.
 #
 # nixpkgs is imported via fetchTarball in nix/nixpkgs.nix, bypassing the
-# flake input system. This is critical for `nix develop` performance:
-#
-#   - Each flake input adds ~1.5s of fetcher-cache verification on cold
-#     eval cache. Even a single nixpkgs input costs ~7s.
-#   - With zero inputs, `nix develop` cold is ~2.6s, warm is ~0.3s.
+# flake input system. This is critical for `nix develop` performance.
 #
 # DO NOT add flake inputs (nixpkgs, flake-parts, git-hooks, etc.).
 # Instead, use fetchTarball or callPackage in nix/ files.
 {
   outputs =
-    { self, ... }:
+    {
+      nixpkgs,
+      ...
+    }:
     let
       systems = [
         "x86_64-linux"
+        "aarch64-linux"
       ];
+
       eachSystem =
         f:
         builtins.listToAttrs (
@@ -24,13 +25,48 @@
             value = f (import ./nix/nixpkgs.nix { inherit system; });
           }) systems
         );
-      commitHash = self.shortRev or self.dirtyShortRev or "dev";
+
     in
     {
       formatter = eachSystem (pkgs: pkgs.nixfmt-tree);
-      packages = eachSystem (pkgs: import ./default.nix { inherit pkgs commitHash; });
       devShells = eachSystem (pkgs: {
-        default = import ./shell.nix { inherit pkgs; };
+        default = pkgs.mkShellNoCC {
+          # Set NIX_PATH for nixd inlay hints
+          env.NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
+
+          buildInputs = (
+            with pkgs;
+            [
+              # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+              bashInteractive
+              findutils # xargs
+              nixfmt # nixfmt-rfc-style is now nixfmt: https://github.com/NixOS/nixpkgs/pull/425068
+              nixfmt-tree
+              nixd
+              just
+              npins
+              uv
+
+              dprint
+              typos
+              zizmor
+            ]
+          );
+        };
+
+        # Lightweight shell for CI nix checks — omits linting tools
+        # already covered by dedicated lint.yml workflow jobs.
+        ci = pkgs.mkShellNoCC {
+          buildInputs = (
+            with pkgs;
+            [
+              bashInteractive
+              findutils
+              nixfmt
+              just
+            ]
+          );
+        };
       });
     };
 }
